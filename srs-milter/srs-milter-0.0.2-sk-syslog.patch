@@ -1,0 +1,371 @@
+diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter.c
+--- srs-milter-0.0.2.dist/src/srs-filter.c	2016-09-20 20:09:23.041754625 +0200
++++ srs-milter-0.0.2/src/srs-filter.c	2016-09-20 20:19:12.111668735 +0200
+@@ -312,7 +312,7 @@
+   if (!td) {
+     td = (struct srs_milter_thread_data*) malloc( sizeof(struct srs_milter_thread_data) );
+     if (!td) {
+-      syslog(LOG_ERR, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't allocate memory for thread data",
++      syslog(LOG_MAIL | LOG_ERR, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't allocate memory for thread data",
+              hostname, hostaddr);
+       return SMFIS_TEMPFAIL;
+     }
+@@ -321,11 +321,11 @@
+     td->num = ++threads; // this should be done in thread-safe way
+ 
+     if (config.verbose)
+-      syslog(LOG_DEBUG, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): created new thread %i data",
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): created new thread %i data",
+              hostname, hostaddr, td->num);
+ 
+     if (pthread_setspecific(key, td)) {
+-      syslog(LOG_ERR, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't store thread %i data",
++      syslog(LOG_MAIL | LOG_ERR, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't store thread %i data",
+              hostname, hostaddr, td->num);
+       free(td);
+       return SMFIS_TEMPFAIL;
+@@ -336,13 +336,13 @@
+   cd = (struct srs_milter_connection_data*) malloc(sizeof(struct srs_milter_connection_data));
+   if (!cd) {
+     if (config.verbose)
+-      syslog(LOG_DEBUG, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't allocate memory for connection data",
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't allocate memory for connection data",
+              hostname, hostaddr);
+     return SMFIS_TEMPFAIL;
+   }
+   if (smfi_setpriv(ctx, (void*) cd) != MI_SUCCESS) {
+     if (config.verbose)
+-      syslog(LOG_DEBUG, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't set ctx data",
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# ?[?] - xxfi_srs_milter_connect(\"%s\", %p): can't set ctx data",
+              hostname, hostaddr);
+     return SMFIS_TEMPFAIL;
+   }
+@@ -352,7 +352,7 @@
+   cd->num = ++connections; // this should be done in thread-safe way
+ 
+   if (config.verbose)
+-    syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_connect(\"%s\", hostaddr)",
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_connect(\"%s\", hostaddr)",
+            cd->num, cd->state, hostname);
+ 
+   return SMFIS_CONTINUE;
+@@ -370,13 +370,13 @@
+     return SMFIS_CONTINUE;
+ 
+   if (config.verbose)
+-    syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envfrom(\"%s\")",
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envfrom(\"%s\")",
+            cd->num, cd->state, argv[0]);
+ 
+   if (strlen(argv[0]) < 1 || strcmp(argv[0], "<>") == 0 || argv[0][0] != '<' || argv[0][strlen(argv[0])-1] != '>' || !strchr(argv[0], '@')) {
+     cd->state |= SS_STATE_INVALID_MSG;
+     if (config.verbose)
+-      syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envfrom(\"%s\"): skipping \"MAIL FROM: %s\"",
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envfrom(\"%s\"): skipping \"MAIL FROM: %s\"",
+              cd->num, cd->state, argv[0], argv[0]);
+     return SMFIS_CONTINUE;
+   }
+@@ -450,7 +450,7 @@
+     return SMFIS_CONTINUE;
+ 
+   if (config.verbose)
+-    syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envrcpt(\"%s\")",
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envrcpt(\"%s\")",
+            cd->num, cd->state, argv[0]);
+ 
+   // get recipient address
+@@ -513,7 +513,7 @@
+   if (!queue_id) queue_id = "unknown";
+ 
+   if (config.verbose)
+-    syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom()", cd->num, cd->state, queue_id);
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom()", cd->num, cd->state, queue_id);
+ 
+   int fix_envfrom = 0;
+ 
+@@ -536,7 +536,7 @@
+ 
+       td = (struct srs_milter_thread_data*) pthread_getspecific(key);
+       if (!td) {
+-        syslog(LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): can't get thread data!? (SPF)",
++        syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): can't get thread data!? (SPF)",
+                cd->num, cd->state, queue_id);
+         cd->state |= SS_STATE_INVALID_MSG;
+         return SMFIS_CONTINUE;
+@@ -545,11 +545,11 @@
+       while (1) {
+         if (!td->spf) {
+           if (config.verbose)
+-            syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): SPF_server_new",
++            syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): SPF_server_new",
+                    cd->num, cd->state, queue_id, td->num);
+ 
+           if (!(td->spf = SPF_server_new(SPF_DNS_CACHE, config.verbose))) {
+-            syslog(LOG_NOTICE, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): libspf2 error SPF_server_new",
++            syslog(LOG_MAIL | LOG_NOTICE, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): libspf2 error SPF_server_new",
+                    cd->num, cd->state, queue_id, td->num);
+             break;
+           }
+@@ -562,7 +562,7 @@
+         }
+ 
+         if (!(spf_request = SPF_request_new(td->spf))) {
+-          syslog(LOG_NOTICE, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): libspf2 error SPF_request_new",
++          syslog(LOG_MAIL | LOG_NOTICE, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): libspf2 error SPF_request_new",
+                  cd->num, cd->state, queue_id, td->num);
+           break;
+         }
+@@ -585,7 +585,7 @@
+         if (spf_response) {
+           SPF_result_t spf_result = SPF_response_result(spf_response);
+           if (config.verbose)
+-            syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): spf(%s, %s, %s) = %i (%s)",
++            syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): spf(%s, %s, %s) = %i (%s)",
+                    cd->num, cd->state, queue_id, td->num,
+                    host, config.spf_heloname,
+                    cd->sender, spf_ret, SPF_strresult(spf_ret));
+@@ -598,7 +598,7 @@
+             fix_envfrom = 1;
+         } else {
+           if (config.verbose)
+-            syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): spf(%s, %s, %s) NULL response?!",
++            syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): spf(%s, %s, %s) NULL response?!",
+                    cd->num, cd->state, queue_id, td->num, host,
+                    config.spf_heloname, cd->sender);
+         }
+@@ -607,7 +607,7 @@
+       }
+ 
+       if (spf_ret != SPF_E_SUCCESS) {
+-        syslog(LOG_NOTICE, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): libspf2 error %i (%s)",
++        syslog(LOG_MAIL | LOG_NOTICE, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): libspf2 error %i (%s)",
+                cd->num, cd->state, queue_id, td->num, spf_ret, SPF_strerror(spf_ret));
+       }
+ 
+@@ -623,17 +623,17 @@
+   // debug log gathered data...
+   if (config.verbose) {
+     int i = 0;
+-    syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): forward = %i, fix_envfrom = %i%s",
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): forward = %i, fix_envfrom = %i%s",
+            cd->num, cd->state, queue_id, config.forward, fix_envfrom,
+            cd->recip_remote ? " (message has remote recipient)" : "");
+     for (i = 0; cd->recip && cd->recip[i]; i++);
+-    syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): reverse = %i, rewrite_count = %i",
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): reverse = %i, rewrite_count = %i",
+            cd->num, cd->state, queue_id, config.reverse, i);
+-    syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): sender = %s%s",
++    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): sender = %s%s",
+            cd->num, cd->state, queue_id, cd->sender,
+            is_local_addr(cd->sender) ? " (local)" : "");
+     for (i = 0; cd->recip && cd->recip[i]; i++)
+-      syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): recip = %s%s",
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): recip = %s%s",
+              cd->num, cd->state, queue_id, cd->recip[i],
+              is_local_addr(cd->recip[i]) ? " (local)" : "");
+   }
+@@ -645,7 +645,7 @@
+ 
+     td = (struct srs_milter_thread_data*) pthread_getspecific(key);
+     if (!td) {
+-      syslog(LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): can't get thread data!? (SRS)",
++      syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): can't get thread data!? (SRS)",
+              cd->num, cd->state, queue_id);
+       cd->state |= SS_STATE_INVALID_MSG;
+       return SMFIS_CONTINUE;
+@@ -653,12 +653,12 @@
+ 
+     if (!td->srs) { // initialize & configure SRS
+       if (config.verbose)
+-        syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): srs_new",
++        syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): srs_new",
+                cd->num, cd->state, queue_id, td->num);
+ 
+       td->srs = srs_new();
+       if (!td->srs) {
+-        syslog(LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): can't initialize SRS",
++        syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): can't initialize SRS",
+                cd->num, cd->state, queue_id, td->num);
+         cd->state |= SS_STATE_INVALID_MSG;
+         return SMFIS_CONTINUE;
+@@ -685,15 +685,15 @@
+       // modify MAIL FROM: address to SRS format
+       if ((srs_res = srs_forward_alloc(td->srs, &out, cd->sender, config.srs_domain)) == SRS_SUCCESS) {
+         if (smfi_chgfrom(ctx, out, NULL) != MI_SUCCESS) {
+-          syslog(LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) failed",
++          syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) failed",
+                  cd->num, cd->state, queue_id, td->num, out);
+         } else {
+           if (config.verbose)
+-            syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) OK",
++            syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) OK",
+                    cd->num, cd->state, queue_id, td->num, out);
+         }
+       } else {
+-        syslog(LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): srs_forward_alloc(srs, out, %s, %s) failed: %i (%s)",
++        syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): srs_forward_alloc(srs, out, %s, %s) failed: %i (%s)",
+                cd->num, cd->state, queue_id, td->num, cd->sender, config.srs_domain, srs_res, srs_strerror(srs_res));
+       }
+ 
+@@ -706,18 +706,18 @@
+       for (i = 0; cd->recip[i]; i++) {
+         if ((srs_res = srs_reverse_alloc(td->srs, &out, cd->recip[i])) == SRS_SUCCESS) {
+           if (smfi_delrcpt(ctx, cd->recip[i]) != MI_SUCCESS) {
+-            syslog(LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): smfi_delrcpt(ctx, %s) failed",
++            syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): smfi_delrcpt(ctx, %s) failed",
+                    cd->num, cd->state, queue_id, cd->recip[i]);
+           } else if (smfi_addrcpt(ctx, out) != MI_SUCCESS) {
+-            syslog(LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): smfi_addrcpt(ctx, %s) failed",
++            syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): smfi_addrcpt(ctx, %s) failed",
+                    cd->num, cd->state, queue_id, out);
+           } else {
+             if (config.verbose)
+-              syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): smfi_{del,add}rcpt(%s, %s) OK",
++              syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): smfi_{del,add}rcpt(%s, %s) OK",
+                      cd->num, cd->state, queue_id, cd->recip[i], out);
+           }
+         } else {
+-          syslog(LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): srs_reverse_alloc(srs, out, %s) failed: %i (%s)",
++          syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): srs_reverse_alloc(srs, out, %s) failed: %i (%s)",
+                  cd->num, cd->state, queue_id, cd->recip[i], srs_res, srs_strerror(srs_res));
+         }
+ 
+@@ -740,10 +740,10 @@
+ 
+   if (config.verbose) {
+     if (cd)
+-      syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_close()",
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_close()",
+              cd->num, cd->state);
+     else
+-      syslog(LOG_DEBUG, "conn# ?[not_connected] - xxfi_srs_milter_close()");
++      syslog(LOG_MAIL | LOG_DEBUG, "conn# ?[not_connected] - xxfi_srs_milter_close()");
+   }
+ 
+   if (!cd)
+@@ -801,13 +801,13 @@
+   /* Fork off the parent process */
+   pid = fork();
+   if (pid < 0) {
+-    syslog(LOG_ERR, "forking daemon process failed: %s", strerror(errno));
++    syslog(LOG_MAIL | LOG_ERR, "forking daemon process failed: %s", strerror(errno));
+     exit(EXIT_FAILURE);
+   }
+   /* If we got a good PID, then
+      we can exit the parent process. */
+   if (pid > 0) {
+-    syslog(LOG_ERR, "exiting parent process");
++    syslog(LOG_MAIL | LOG_ERR, "exiting parent process");
+     exit(EXIT_SUCCESS);
+   }
+ 
+@@ -819,13 +819,13 @@
+   /* Create a new SID for the child process */
+   sid = setsid();
+   if (sid < 0) {
+-    syslog(LOG_ERR, "can't create new SID: %s", strerror(errno));
++    syslog(LOG_MAIL | LOG_ERR, "can't create new SID: %s", strerror(errno));
+     exit(EXIT_FAILURE);
+   }
+ 
+   /* Change the current working directory */
+   if ((chdir("/")) < 0) {
+-    syslog(LOG_ERR, "can't chagne working directory: %s", strerror(errno));
++    syslog(LOG_MAIL | LOG_ERR, "can't chagne working directory: %s", strerror(errno));
+     exit(EXIT_FAILURE);
+   }
+ 
+@@ -1100,12 +1100,12 @@
+     // Milter library version
+     unsigned int milter_major, milter_minor, milter_patch;
+     smfi_version(&milter_major, &milter_minor, &milter_patch);
+-    syslog(LOG_DEBUG, "MILTER(%i, %i, %i)", milter_major, milter_minor, milter_patch);
++    syslog(LOG_MAIL | LOG_DEBUG, "MILTER(%i, %i, %i)", milter_major, milter_minor, milter_patch);
+ 
+     // SPF library version
+     int spf_major, spf_minor, spf_patch;
+     SPF_get_lib_version(&spf_major, &spf_minor, &spf_patch);
+-    syslog(LOG_DEBUG, "SPF(%i, %i, %i)", spf_major, spf_minor, spf_patch);
++    syslog(LOG_MAIL | LOG_DEBUG, "SPF(%i, %i, %i)", spf_major, spf_minor, spf_patch);
+ 
+     // SRS library version
+     // ???
+@@ -1204,43 +1204,43 @@
+     // print configuration
+     if (config.verbose) {
+       if (config.pidfile)
+-        syslog(LOG_DEBUG, "config pidfile: %s", config.pidfile);
++        syslog(LOG_MAIL | LOG_DEBUG, "config pidfile: %s", config.pidfile);
+       if (config.forward)
+-        syslog(LOG_DEBUG, "config forward: %i", config.forward);
++        syslog(LOG_MAIL | LOG_DEBUG, "config forward: %i", config.forward);
+       if (config.reverse)
+-        syslog(LOG_DEBUG, "config reverse: %i", config.reverse);
++        syslog(LOG_MAIL | LOG_DEBUG, "config reverse: %i", config.reverse);
+       if (config.socket)
+-        syslog(LOG_DEBUG, "config socket: %s", config.socket);
++        syslog(LOG_MAIL | LOG_DEBUG, "config socket: %s", config.socket);
+       if (config.timeout)
+-        syslog(LOG_DEBUG, "config timeout: %i", config.timeout);
++        syslog(LOG_MAIL | LOG_DEBUG, "config timeout: %i", config.timeout);
+       for (i = 0; config.domains && config.domains[i]; i++)
+-        syslog(LOG_DEBUG, "config local_domain: %s", config.domains[i]);
++        syslog(LOG_MAIL | LOG_DEBUG, "config local_domain: %s", config.domains[i]);
+       if (config.srs_domain)
+-        syslog(LOG_DEBUG, "config srs_domain: %s", config.srs_domain);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_domain: %s", config.srs_domain);
+       for (i = 0; config.srs_secrets && config.srs_secrets[i]; i++)
+-        syslog(LOG_DEBUG, "config srs_secret: %s", config.srs_secrets[i]);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_secret: %s", config.srs_secrets[i]);
+       if (config.srs_alwaysrewrite > 0)
+-        syslog(LOG_DEBUG, "config srs_alwaysrewrite: %i", config.srs_alwaysrewrite);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_alwaysrewrite: %i", config.srs_alwaysrewrite);
+       if (config.srs_hashlength > 0)
+-        syslog(LOG_DEBUG, "config srs_hashlength: %i", config.srs_hashlength);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_hashlength: %i", config.srs_hashlength);
+       if (config.srs_hashmin > 0)
+-        syslog(LOG_DEBUG, "config srs_hashmin: %i", config.srs_hashmin);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_hashmin: %i", config.srs_hashmin);
+       if (config.srs_maxage > 0)
+-        syslog(LOG_DEBUG, "config srs_maxage: %i", config.srs_maxage);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_maxage: %i", config.srs_maxage);
+       if (config.srs_separator != 0)
+-        syslog(LOG_DEBUG, "config srs_separator: %c", config.srs_separator);
+-      syslog(LOG_DEBUG, "config spf_check: %i", config.spf_check);
++        syslog(LOG_MAIL | LOG_DEBUG, "config srs_separator: %c", config.srs_separator);
++      syslog(LOG_MAIL | LOG_DEBUG, "config spf_check: %i", config.spf_check);
+       if (config.spf_check) {
+         if (config.spf_heloname)
+-          syslog(LOG_DEBUG, "config spf_heloname: %s", config.spf_heloname);
++          syslog(LOG_MAIL | LOG_DEBUG, "config spf_heloname: %s", config.spf_heloname);
+         if (config.spf_address.in.sin_family == AF_INET) {
+           char host[INET_ADDRSTRLEN+1];
+           inet_ntop(AF_INET, &config.spf_address.in.sin_addr, host, INET_ADDRSTRLEN);
+-          syslog(LOG_DEBUG, "config spf_address: %s (IP)", host);
++          syslog(LOG_MAIL | LOG_DEBUG, "config spf_address: %s (IP)", host);
+         } else {
+           char host[INET_ADDRSTRLEN+1];
+           inet_ntop(AF_INET6, &config.spf_address.in6.sin6_addr, host, INET_ADDRSTRLEN);
+-          syslog(LOG_DEBUG, "config spf_address: %s (IPv6)", host);
++          syslog(LOG_MAIL | LOG_DEBUG, "config spf_address: %s (IPv6)", host);
+         }
+       }
+     }
+@@ -1250,7 +1250,7 @@
+     pid_t ppid = getpid();
+     if (daemon) {
+       daemonize();
+-      syslog(LOG_NOTICE, "daemonized PID %i", (int) ppid);
++      syslog(LOG_MAIL | LOG_NOTICE, "daemonized PID %i", (int) ppid);
+     }
+   }
+ 
+@@ -1295,7 +1295,7 @@
+     } while (*++s != NULL);
+   }
+ 
+-  syslog(LOG_INFO, "exitting");
++  syslog(LOG_MAIL | LOG_INFO, "exitting");
+ 
+   pthread_key_delete(key);
+ 
