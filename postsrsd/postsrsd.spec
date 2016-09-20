@@ -8,7 +8,7 @@
 
 Name:		postsrsd
 Version:	1.1
-Release:	3%{?dist}
+Release:	5%{?dist}
 Summary:	PostSRSd provides the Sender Rewriting Scheme (SRS) via TCP-based lookup tables for Postfix.
 
 Group:		System Environment/Daemons
@@ -85,6 +85,9 @@ fi
 
 
 %changelog
+* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 1.1-5
+- Bump version number
+
 * Tue Sep 20 2016 Simon Klempert <git@klempert.net> 1.1-3
 - new package built with tito
 
