@@ -15,7 +15,8 @@ Patch0: srs-milter-0.0.2-vokac.patch
 Patch1: srs-milter-0.0.2-sk.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  sendmail-devel libsrs2 libspf2
+BuildRequires:  sendmail-devel libsrs2
+BuildRequires:  libspf2 >= libspf2-1.2.10-10
 %if 0%{?rhel} < 6
 Requires:       sendmail
 %else
