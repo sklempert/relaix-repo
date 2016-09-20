@@ -1,7 +1,7 @@
 Summary: An implemenation of the Sender Policy Framework.
 Name: libspf2
 Version: 1.2.10
-Release: 3%{?dist}
+Release: 10%{?dist}
 License: GPL/BSD dual license
 Group: System Environment/Libraries
 URL: http://www.libspf2.org/
@@ -53,6 +53,9 @@ rm -rf %{buildroot}
 %{_includedir}/spf2/*
 
 %changelog
+* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 1.2.10-10
+- Bump version number to be the newest
+
 * Tue Sep 20 2016 Simon Klempert <git@klempert.net> 1.2.10-3
 - merge fixes (git@klempert.net)
 
