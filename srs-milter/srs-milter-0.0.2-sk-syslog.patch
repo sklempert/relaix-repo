@@ -1,6 +1,6 @@
 diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter.c
---- srs-milter-0.0.2.dist/src/srs-filter.c	2016-09-20 20:09:23.041754625 +0200
-+++ srs-milter-0.0.2/src/srs-filter.c	2016-09-20 20:19:12.111668735 +0200
+--- srs-milter-0.0.2.dist/src/srs-filter.c	2016-09-20 21:55:10.093014760 +0200
++++ srs-milter-0.0.2/src/srs-filter.c	2016-09-20 22:08:20.357956436 +0200
 @@ -312,7 +312,7 @@
    if (!td) {
      td = (struct srs_milter_thread_data*) malloc( sizeof(struct srs_milter_thread_data) );
@@ -49,9 +49,11 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
             cd->num, cd->state, hostname);
  
    return SMFIS_CONTINUE;
-@@ -370,13 +370,13 @@
+@@ -369,14 +369,15 @@
+   if (cd->state & SS_STATE_INVALID_CONN)
      return SMFIS_CONTINUE;
  
++  syslog(LOG_MAIL | LOG_INFO, "conn# %d[%i] - MAIL FROM: %s", cd->num, cd->state, argv[0]);
    if (config.verbose)
 -    syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envfrom(\"%s\")",
 +    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envfrom(\"%s\")",
@@ -65,16 +67,18 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
               cd->num, cd->state, argv[0], argv[0]);
      return SMFIS_CONTINUE;
    }
-@@ -450,7 +450,7 @@
+@@ -449,8 +450,9 @@
+   if (cd->state & SS_STATE_INVALID_CONN)
      return SMFIS_CONTINUE;
  
++  syslog(LOG_MAIL | LOG_INFO, "conn# %d[%i] - RCPT TO: %s", cd->num, cd->state, argv[0]);
    if (config.verbose)
 -    syslog(LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envrcpt(\"%s\")",
 +    syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i] - xxfi_srs_milter_envrcpt(\"%s\")",
             cd->num, cd->state, argv[0]);
  
    // get recipient address
-@@ -513,7 +513,7 @@
+@@ -513,7 +515,7 @@
    if (!queue_id) queue_id = "unknown";
  
    if (config.verbose)
@@ -83,7 +87,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
  
    int fix_envfrom = 0;
  
-@@ -536,7 +536,7 @@
+@@ -536,7 +538,7 @@
  
        td = (struct srs_milter_thread_data*) pthread_getspecific(key);
        if (!td) {
@@ -92,7 +96,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                 cd->num, cd->state, queue_id);
          cd->state |= SS_STATE_INVALID_MSG;
          return SMFIS_CONTINUE;
-@@ -545,11 +545,11 @@
+@@ -545,11 +547,11 @@
        while (1) {
          if (!td->spf) {
            if (config.verbose)
@@ -106,7 +110,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                     cd->num, cd->state, queue_id, td->num);
              break;
            }
-@@ -562,7 +562,7 @@
+@@ -562,7 +564,7 @@
          }
  
          if (!(spf_request = SPF_request_new(td->spf))) {
@@ -115,16 +119,21 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                   cd->num, cd->state, queue_id, td->num);
            break;
          }
-@@ -585,7 +585,7 @@
+@@ -584,8 +586,12 @@
+ 
          if (spf_response) {
            SPF_result_t spf_result = SPF_response_result(spf_response);
++          syslog(LOG_MAIL | LOG_INFO, "conn# %d[%i][%s][%i] - spf lookup(%s, %s, %s) = %i (%s)",
++                 cd->num, cd->state, queue_id, td->num,
++                 host, config.spf_heloname,
++                 cd->sender, spf_ret, SPF_strresult(spf_ret));
            if (config.verbose)
 -            syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): spf(%s, %s, %s) = %i (%s)",
 +            syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): spf(%s, %s, %s) = %i (%s)",
                     cd->num, cd->state, queue_id, td->num,
                     host, config.spf_heloname,
                     cd->sender, spf_ret, SPF_strresult(spf_ret));
-@@ -598,7 +598,7 @@
+@@ -598,7 +604,7 @@
              fix_envfrom = 1;
          } else {
            if (config.verbose)
@@ -133,7 +142,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                     cd->num, cd->state, queue_id, td->num, host,
                     config.spf_heloname, cd->sender);
          }
-@@ -607,7 +607,7 @@
+@@ -607,7 +613,7 @@
        }
  
        if (spf_ret != SPF_E_SUCCESS) {
@@ -142,8 +151,13 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                 cd->num, cd->state, queue_id, td->num, spf_ret, SPF_strerror(spf_ret));
        }
  
-@@ -623,17 +623,17 @@
+@@ -621,19 +627,22 @@
+   }
+ 
    // debug log gathered data...
++  syslog(LOG_MAIL | LOG_INFO, "conn# %d[%i][%s] - forward = %i, fix_envfrom = %i%s",
++         cd->num, cd->state, queue_id, config.forward, fix_envfrom,
++         cd->recip_remote ? " (message has remote recipient)" : "");
    if (config.verbose) {
      int i = 0;
 -    syslog(LOG_DEBUG, "conn# %d[%i][%s] - xxfi_srs_milter_eom(): forward = %i, fix_envfrom = %i%s",
@@ -164,7 +178,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
               cd->num, cd->state, queue_id, cd->recip[i],
               is_local_addr(cd->recip[i]) ? " (local)" : "");
    }
-@@ -645,7 +645,7 @@
+@@ -645,7 +654,7 @@
  
      td = (struct srs_milter_thread_data*) pthread_getspecific(key);
      if (!td) {
@@ -173,7 +187,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
               cd->num, cd->state, queue_id);
        cd->state |= SS_STATE_INVALID_MSG;
        return SMFIS_CONTINUE;
-@@ -653,12 +653,12 @@
+@@ -653,12 +662,12 @@
  
      if (!td->srs) { // initialize & configure SRS
        if (config.verbose)
@@ -188,7 +202,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                 cd->num, cd->state, queue_id, td->num);
          cd->state |= SS_STATE_INVALID_MSG;
          return SMFIS_CONTINUE;
-@@ -685,15 +685,15 @@
+@@ -685,15 +694,17 @@
        // modify MAIL FROM: address to SRS format
        if ((srs_res = srs_forward_alloc(td->srs, &out, cd->sender, config.srs_domain)) == SRS_SUCCESS) {
          if (smfi_chgfrom(ctx, out, NULL) != MI_SUCCESS) {
@@ -196,6 +210,8 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
 +          syslog(LOG_MAIL | LOG_ERR, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) failed",
                   cd->num, cd->state, queue_id, td->num, out);
          } else {
++          syslog(LOG_MAIL | LOG_INFO, "conn# %d[%i][%s][%i] - Rewrite from %s to %s",
++                 cd->num, cd->state, queue_id, td->num, cd->sender, out);
            if (config.verbose)
 -            syslog(LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) OK",
 +            syslog(LOG_MAIL | LOG_DEBUG, "conn# %d[%i][%s][%i] - xxfi_srs_milter_eom(): smfi_chgfrom(ctx, %s, NULL) OK",
@@ -207,7 +223,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                 cd->num, cd->state, queue_id, td->num, cd->sender, config.srs_domain, srs_res, srs_strerror(srs_res));
        }
  
-@@ -706,18 +706,18 @@
+@@ -706,18 +717,18 @@
        for (i = 0; cd->recip[i]; i++) {
          if ((srs_res = srs_reverse_alloc(td->srs, &out, cd->recip[i])) == SRS_SUCCESS) {
            if (smfi_delrcpt(ctx, cd->recip[i]) != MI_SUCCESS) {
@@ -230,7 +246,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
                   cd->num, cd->state, queue_id, cd->recip[i], srs_res, srs_strerror(srs_res));
          }
  
-@@ -740,10 +740,10 @@
+@@ -740,10 +751,10 @@
  
    if (config.verbose) {
      if (cd)
@@ -243,7 +259,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
    }
  
    if (!cd)
-@@ -801,13 +801,13 @@
+@@ -801,13 +812,13 @@
    /* Fork off the parent process */
    pid = fork();
    if (pid < 0) {
@@ -259,7 +275,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
      exit(EXIT_SUCCESS);
    }
  
-@@ -819,13 +819,13 @@
+@@ -819,13 +830,13 @@
    /* Create a new SID for the child process */
    sid = setsid();
    if (sid < 0) {
@@ -275,7 +291,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
      exit(EXIT_FAILURE);
    }
  
-@@ -1100,12 +1100,12 @@
+@@ -1100,12 +1111,12 @@
      // Milter library version
      unsigned int milter_major, milter_minor, milter_patch;
      smfi_version(&milter_major, &milter_minor, &milter_patch);
@@ -290,7 +306,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
  
      // SRS library version
      // ???
-@@ -1204,43 +1204,43 @@
+@@ -1204,43 +1215,43 @@
      // print configuration
      if (config.verbose) {
        if (config.pidfile)
@@ -351,7 +367,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
          }
        }
      }
-@@ -1250,7 +1250,7 @@
+@@ -1250,7 +1261,7 @@
      pid_t ppid = getpid();
      if (daemon) {
        daemonize();
@@ -360,7 +376,7 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
      }
    }
  
-@@ -1295,7 +1295,7 @@
+@@ -1295,7 +1306,7 @@
      } while (*++s != NULL);
    }
  
