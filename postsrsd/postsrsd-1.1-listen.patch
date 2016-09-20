@@ -1,0 +1,21 @@
+diff -ru postsrsd-1.1/init/postsrsd.sysv-redhat.in postsrsd-1.1.patched/init/postsrsd.sysv-redhat.in
+--- postsrsd-1.1/init/postsrsd.sysv-redhat.in	2016-04-21 22:48:51.000000000 +0200
++++ postsrsd-1.1.patched/init/postsrsd.sysv-redhat.in	2016-05-30 17:40:39.678934608 +0200
+@@ -26,6 +26,7 @@
+ # Default configuration
+ SRS_DOMAIN=`postconf -h mydomain || true`
+ SRS_EXCLUDE_DOMAINS=
++SRS_LISTEN_ADDR=127.0.0.1
+ 
+ # Read config file
+ . @CONFIG_DIR@/$NAME
+@@ -35,7 +36,8 @@
+ do_start()
+ {
+ 	echo -n "Starting $DESC: "
+-	daemon $DAEMON -f "$SRS_FORWARD_PORT" -r "$SRS_REVERSE_PORT" -d "$SRS_DOMAIN" -s "$SRS_SECRET" \
++	daemon $DAEMON -f "$SRS_FORWARD_PORT" -r "$SRS_REVERSE_PORT"  -l "$SRS_LISTEN_ADDR" \
++                       -d "$SRS_DOMAIN" -s "$SRS_SECRET" \
+ 	               -u "$RUN_AS" -p "$PIDFILE" -a "$SRS_SEPARATOR" -c "$CHROOT" -D -X"$SRS_EXCLUDE_DOMAINS"
+ 	RETVAL=$?
+ 	echo
