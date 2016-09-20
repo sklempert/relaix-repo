@@ -53,7 +53,11 @@ rm -rf %{buildroot}
 %{_includedir}/spf2/*
 
 %changelog
+<<<<<<< HEAD
 * Tue Sep 20 2016 Simon Klempert <git@klempert.net> 1.2.10-2
+=======
+* Tue Sep 20 2016 Unknown name <simon@klempert.net> 1.2.10-2
+>>>>>>> 7082d2b93d9dcb4f9726f86970975a976dc52a70
 - new package built with tito
 
 * Wed Jul 02 2008 Frolov Denis <d.frolov81@mail.ru> 
