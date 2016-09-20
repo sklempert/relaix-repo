@@ -13,6 +13,7 @@ Source4:	srs-milter@.service
 
 Patch0: srs-milter-0.0.2-vokac.patch
 Patch1: srs-milter-0.0.2-sk.patch
+Patch2: srs-milter-0.0.2-sk-syslog.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  sendmail-devel libsrs2
@@ -57,6 +58,7 @@ socket to communicate with the Postfix MTA.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__make} %{?_smp_mflags} -C src
