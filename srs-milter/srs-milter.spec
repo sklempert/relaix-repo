@@ -1,7 +1,7 @@
 Summary:        Milter (mail filter) for SRS
 Name:           srs-milter
 Version:        0.0.2
-Release:        3
+Release:        4
 License:        GPL
 Group:          System Environment/Daemons
 URL:            https://github.com/vokac/srs-milter
@@ -149,6 +149,9 @@ fi
 %dir %attr(-,sa-milt,postfix) %{_localstatedir}/run/srs-milter/postfix/
 
 %changelog
+* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-4
+- Require correct libspf2 version (git@klempert.net)
+
 * Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-3
 - new package built with tito
 
