@@ -1,0 +1,78 @@
+diff -uNr srs-milter-0.0.2/src/srs-filter.c srs-milter-0.0.2-sk/src/srs-filter.c
+--- srs-milter-0.0.2/src/srs-filter.c	2016-09-19 19:20:35.561197694 +0200
++++ srs-milter-0.0.2-sk/src/srs-filter.c	2016-09-19 19:37:10.647152407 +0200
+@@ -843,7 +843,7 @@
+   printf("usage:\n");
+   printf("  %s [--forward] [--reverse] \\\n", argv0);
+   printf("    --socket unix:/var/run/srs-milter.sock \\\n");
+-  printf("    --srs-domain=example.com --srs-secret-file=secret-file \\\n");
++  printf("    --srs-domain=example.com \\\n");
+   printf("    [--local-domain=example.com] [--local-domain=.example.com ...]\n");
+   printf("\n");
+   printf("options:\n");
+@@ -874,10 +874,8 @@
+   printf("      our SRS domain name\n");
+   printf("  -c, --srs-secret\n");
+   printf("      secret string for SRS hashing algorithm\n");
+-  printf("      WARNING: this is NOT secure, it is recommended to use --srs-secret-file\n");
++  printf("      WARNING: this is NOT secure, it is recommended to use --config\n");
+   printf("               instead to ensure secrets are not visible in process listings\n");
+-  printf("  -C, --srs-secret-file\n");
+-  printf("      file containing secrets for SRS hashing algorithm\n");
+   printf("  -w, --srs-alwaysrewrite\n");
+   printf("  -g, --srs-hashlength\n");
+   printf("  -i, --srs-hashmin\n");
+@@ -1020,43 +1018,43 @@
+         break;
+ 
+       case 'k':
+-        srs_milter_configure("spf_check", NULL);
++        srs_milter_configure("spf-check", NULL);
+         break;
+ 
+       case 'c':
+-        srs_milter_configure("spf_secret", optarg);
++        srs_milter_configure("spf-secret", optarg);
+         break;
+ 
+       case 'l':
+-        srs_milter_configure("spf_heloname", optarg);
++        srs_milter_configure("spf-heloname", optarg);
+         break;
+ 
+       case 'a':
+-        srs_milter_configure("spf_address", optarg);
++        srs_milter_configure("spf-address", optarg);
+         break;
+ 
+       case 'o':
+-        srs_milter_configure("srs_domain", optarg);
++        srs_milter_configure("srs-domain", optarg);
+         break;
+ 
+       case 'w':
+-        srs_milter_configure("srs_alwaysrewrite", NULL);
++        srs_milter_configure("srs-alwaysrewrite", NULL);
+         break;
+ 
+       case 'g':
+-        srs_milter_configure("srs_hashlength", optarg);
++        srs_milter_configure("srs-hashlength", optarg);
+         break;
+ 
+       case 'i':
+-        srs_milter_configure("srs_hashmin", optarg);
++        srs_milter_configure("srs-hashmin", optarg);
+         break;
+ 
+       case 'x':
+-        srs_milter_configure("srs_maxage", optarg);
++        srs_milter_configure("srs-maxage", optarg);
+         break;
+ 
+       case 'e':
+-        srs_milter_configure("srs_separator", optarg);
++        srs_milter_configure("srs-separator", optarg);
+         break;
+ 
+       case '?':
