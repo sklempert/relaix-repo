@@ -55,7 +55,7 @@
 
 Name:           git
 Version:        2.10.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 Group:          Development/Tools
@@ -736,6 +736,9 @@ rm -rf %{buildroot}
 # No files for you!
 
 %changelog
+* Wed Sep 21 2016 Simon Klempert <git@klempert.net> 2.10.0-2
+- new package built with tito
+
 * Sat Sep 03 2016 Todd Zullinger <tmz@pobox.com> - 2.10.0-1
 - Update to 2.10.0
 
