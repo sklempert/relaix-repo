@@ -1,0 +1,37 @@
+diff -Nur p0f-3.06b.orig/build.sh p0f-3.06b/build.sh
+--- p0f-3.06b.orig/build.sh	2012-09-29 22:51:20.000000000 -0600
++++ p0f-3.06b/build.sh	2013-12-02 21:06:18.758155005 -0700
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/bash -x
+ #
+ # p0f - build script
+ # ------------------
+@@ -13,12 +13,12 @@
+ 
+ test "$CC" = "" && CC="gcc"
+ 
+-BASIC_CFLAGS="-Wall -Wno-format -I/usr/local/include/ \
+-              -I/opt/local/include/ -DVERSION=\"$VERSION\" $CFLAGS"
++BASIC_CFLAGS="-Wall -Werror=format-security \
++              -DVERSION=\"$VERSION\" $CFLAGS"
+ 
+-BASIC_LDFLAGS="-L/usr/local/lib/ -L/opt/local/lib $LDFLAGS"
++BASIC_LDFLAGS="$LDFLAGS"
+ 
+-USE_CFLAGS="-fstack-protector-all -fPIE -D_FORTIFY_SOURCE=2 -g -ggdb \
++USE_CFLAGS="-fPIE -g -ggdb \
+             $BASIC_CFLAGS"
+ 
+ USE_LDFLAGS="-Wl,-z,relro -pie $BASIC_LDFLAGS"
+@@ -81,8 +81,8 @@
+ elif [ "$1" = "all" -o "$1" = "" ]; then
+ 
+   echo "[+] Configuring production build."
+-  BASIC_CFLAGS="$BASIC_CFLAGS -O3"
+-  USE_CFLAGS="$USE_CFLAGS -O3"
++  BASIC_CFLAGS="$BASIC_CFLAGS -O2"
++  USE_CFLAGS="$USE_CFLAGS -O2"
+ 
+ elif [ "$1" = "debug" ]; then
+ 
