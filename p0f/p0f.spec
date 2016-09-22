@@ -1,6 +1,6 @@
 Name: p0f
 Version: 3.09b
-Release: 2%{?dist}
+Release: 3%{?dist}
 
 Summary: Versatile passive OS fingerprinting tool
 Group: Applications/Internet
@@ -55,6 +55,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 22 2016 Simon Klempert <git@klempert.net> 3.09b-3
+- new package built with tito
+
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.08b-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
