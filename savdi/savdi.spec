@@ -3,7 +3,7 @@
 %define name_daemon            savdid
 
 Name: savdi
-Version: 2.3.0
+Version: 2.4.0
 Release: 1
 Group: System Environment/Daemons
 URL: https://www.sophos.com/
