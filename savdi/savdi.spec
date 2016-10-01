@@ -4,7 +4,7 @@
 
 Name: savdi
 Version: 2.3.0
-Release: 0
+Release: 1
 Group: System Environment/Daemons
 URL: https://www.sophos.com/
 License: Copyright 2000-2015 Sophos Limited. All rights reserved
@@ -56,6 +56,9 @@ Sophos Anti-Virus Dynamic Interface
 /%{_lib}/libsavi.so.3
 
 %changelog
+* Sat Oct 01 2016 Simon Klempert <git@klempert.net> 2.3.0-1
+- new package built with tito
+
 * Sat Jun 11 2016 nazx <jjj@nazx.jp> - 2.3.0
 - Initial release
 
