@@ -1,0 +1,70 @@
+Index: configure.ac
+===================================================================
+--- configure.ac	(revision 3070)
++++ configure.ac	(working copy)
+@@ -275,7 +275,7 @@
+     else
+ 	$PERLV_PATH -e 'require 5;'
+ 	if test $? -ne 0 ; then
+-           AC_MSG_ERROR([can't locate a suitable perl5.])
++	   AC_MSG_ERROR([can't locate a suitable perl5.])
+ 	   exit 1
+ 	fi
+     fi
+@@ -284,6 +284,14 @@
+ PERLV=`basename $PERLV_PATH`
+ AC_SUBST(PERLV)
+ 
++# check Socket.pm version
++AC_MSG_CHECKING([Socket.pm version])
++$PERLV_PATH -e 'use 2.006 Socket qw(inet_pton);' 2>&1 >/dev/null
++if test $? -ne 0 ; then
++   AC_MSG_ERROR([Socket.pm is older than 2.006; upgrade from http://metacpan.org/pod/Socket])
++   exit 1
++fi
++
+ AC_PATH_PROG(EXPECT_PATH,expect,no)
+ if test $EXPECT_PATH = no; then
+     AC_MSG_ERROR([can't locate expect.])
+Index: lib/rancid.pm.in
+===================================================================
+--- lib/rancid.pm.in	(revision 3070)
++++ lib/rancid.pm.in	(working copy)
+@@ -48,7 +48,7 @@
+ use 5.010;
+ use strict 'vars';
+ use warnings;
+-use Socket qw(AF_INET AF_INET6 inet_pton);
++use 2.006 Socket qw(AF_INET AF_INET6 inet_pton);
+ require(Exporter);
+ our @ISA = qw(Exporter);
+ 
+Index: configure
+===================================================================
+--- configure	(revision 3070)
++++ configure	(working copy)
+@@ -5307,7 +5307,7 @@
+     else
+ 	$PERLV_PATH -e 'require 5;'
+ 	if test $? -ne 0 ; then
+-           as_fn_error $? "can't locate a suitable perl5." "$LINENO" 5
++	   as_fn_error $? "can't locate a suitable perl5." "$LINENO" 5
+ 	   exit 1
+ 	fi
+     fi
+@@ -5316,6 +5316,15 @@
+ PERLV=`basename $PERLV_PATH`
+ 
+ 
++# check Socket.pm version
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Socket.pm version" >&5
++$as_echo_n "checking Socket.pm version... " >&6; }
++$PERLV_PATH -e 'use 2.006 Socket qw(inet_pton);' 2>&1 >/dev/null
++if test $? -ne 0 ; then
++   as_fn_error $? "Socket.pm is older than 2.006; upgrade from http://metacpan.org/pod/Socket" "$LINENO" 5
++   exit 1
++fi
++
+ # Extract the first word of "expect", so it can be a program name with args.
+ set dummy expect; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5

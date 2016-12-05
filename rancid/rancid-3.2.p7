@@ -1,0 +1,12 @@
+Index: bin/control_rancid.in
+===================================================================
+--- bin/control_rancid.in	(revision 3119)
++++ bin/control_rancid.in	(working copy)
+@@ -236,6 +236,7 @@
+ 	;;
+     git )
+ 	git status -s rancid.conf | grep '^?'
++	if [ $? -eq 0 ] ; then LN=1; else LN=0; fi
+         ;;
+     esac
+     if [ $LN -eq 0 ] ; then
