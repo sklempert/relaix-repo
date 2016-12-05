@@ -1,6 +1,6 @@
 Name: rancid
-Version: 3.2
-Release: 4%{?dist}
+Version: 3.5.1
+Release: 1%{?dist}
 Summary: Really Awesome New Cisco confIg Differ
 
 Group: Applications/Internet
@@ -11,14 +11,8 @@ Source1: %{name}.cron
 Source2: %{name}.logrotate
 Patch0: %{name}-conf.patch
 Patch1: %{name}-Makefile.patch
-# Upstream Patches
-Patch20: %{name}-%{version}.p1
-Patch21: %{name}-%{version}.p2
-Patch22: %{name}-%{version}.p3
-Patch23: %{name}-%{version}.p4
-Patch24: %{name}-%{version}.p5
-Patch25: %{name}-%{version}.p6
-Patch26: %{name}-%{version}.p7
+# RelAix Patches
+Patch22: %{name}-%{version}-Socket-version-check.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -50,13 +44,7 @@ including software and hardware (cards, serial numbers, etc) and uses CVS
 %setup -q -n %{name}-%{version}
 %patch0 -p1
 %patch1 -p1
-%patch20 -p0
-%patch21 -p0
 %patch22 -p0
-%patch23 -p0
-%patch24 -p0
-%patch25 -p0
-%patch26 -p0
 
 %build
 %configure \
@@ -135,6 +123,10 @@ exit 0
 
 
 %changelog
+* Tue Dec 06 2016 Simon Klempert <sklempert@relaix.net> -  3.5.1-1
+- New Upstream Version
+- Remove Socket.pm version check (this needs to be locally installed with CPAN)
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.2-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
