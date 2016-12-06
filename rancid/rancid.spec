@@ -1,7 +1,7 @@
 Name: rancid
 Epoch: 1
 Version: 3.5.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Really Awesome New Cisco confIg Differ
 
 Group: Applications/Internet
@@ -126,6 +126,9 @@ exit 0
 
 
 %changelog
+* Tue Dec 06 2016 Simon Klempert <git@klempert.net> 3.5.1-5
+- Add epoch 1 to rancid package so it is newer than epel (git@klempert.net)
+
 * Tue Dec 06 2016 Simon Klempert <git@klempert.net> 3.5.1-4
 - Fix foundry flash section parsing (git@klempert.net)
 
