@@ -1,4 +1,5 @@
 Name: rancid
+Epoch: 1
 Version: 3.5.1
 Release: 4%{?dist}
 Summary: Really Awesome New Cisco confIg Differ
