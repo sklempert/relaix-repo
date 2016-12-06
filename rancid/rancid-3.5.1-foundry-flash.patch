@@ -1,0 +1,31 @@
+diff -uNr rancid-3.5.1/lib/foundry.pm.in rancid-3.5.1-new/lib/foundry.pm.in
+--- rancid-3.5.1/lib/foundry.pm.in	2016-09-04 11:43:49.000000000 +0200
++++ rancid-3.5.1-new/lib/foundry.pm.in	2016-12-06 15:24:02.779580269 +0100
+@@ -171,6 +171,7 @@
+     my($INPUT, $OUTPUT) = @_;
+     print STDERR "    In ShowFlash: $_" if ($debug);
+ 
++    my $skip = 0;
+     while (<$INPUT>) {
+ 	tr/\015//d;
+ 	last if (/^$prompt/);
+@@ -194,7 +195,18 @@
+ 		$_ = "code flash free space = 0 bytes\n";
+ 	    }
+ 	}
+-	ProcessHistory("FLASH","","","!Flash: $_");
++	if (/^Compressed Pri Code size.*SXS07202j/) {
++	  s/ \(.*//;
++	}
++	if (/^Compressed Sec Code size/) {
++          $skip = 0;
++        }
++
++	ProcessHistory("FLASH","","","!Flash: $_") unless $skip;
++
++	if (/^Compressed Pri Code/) {
++          $skip = 1;
++        }
+     }
+     ProcessHistory("","","","!\n");
+     return;

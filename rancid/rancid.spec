@@ -13,6 +13,7 @@ Patch0: %{name}-conf.patch
 Patch1: %{name}-Makefile.patch
 # RelAix Patches
 Patch22: %{name}-%{version}-Socket-version-check.patch
+Patch23: %{name}-%{version}-foundry-flash.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -45,6 +46,7 @@ including software and hardware (cards, serial numbers, etc) and uses CVS
 %patch0 -p1
 %patch1 -p1
 %patch22 -p0
+%patch23 -p1
 
 %build
 %configure \
