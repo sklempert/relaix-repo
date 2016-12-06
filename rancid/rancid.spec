@@ -1,6 +1,6 @@
 Name: rancid
 Version: 3.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Really Awesome New Cisco confIg Differ
 
 Group: Applications/Internet
@@ -123,6 +123,9 @@ exit 0
 
 
 %changelog
+* Tue Dec 06 2016 Simon Klempert <git@klempert.net> 3.5.1-2
+- new package built with tito
+
 * Tue Dec 06 2016 Simon Klempert <sklempert@relaix.net> -  3.5.1-1
 - New Upstream Version
 - Remove Socket.pm version check (this needs to be locally installed with CPAN)
