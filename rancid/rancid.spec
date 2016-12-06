@@ -1,6 +1,6 @@
 Name: rancid
 Version: 3.5.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Really Awesome New Cisco confIg Differ
 
 Group: Applications/Internet
@@ -125,6 +125,9 @@ exit 0
 
 
 %changelog
+* Tue Dec 06 2016 Simon Klempert <git@klempert.net> 3.5.1-4
+- Fix foundry flash section parsing (git@klempert.net)
+
 * Tue Dec 06 2016 Simon Klempert <git@klempert.net> 3.5.1-3
 - Fix patches (git@klempert.net)
 
