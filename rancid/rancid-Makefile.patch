@@ -1,6 +1,7 @@
---- a/bin/Makefile.in	2014-10-06 20:47:51.219724697 -0700
-+++ b/bin/Makefile.in	2014-10-06 20:48:00.763494836 -0700
-@@ -227,7 +227,7 @@
+diff -uNr rancid-3.5.1/bin/Makefile.in rancid-3.5.1.new/bin/Makefile.in
+--- rancid-3.5.1/bin/Makefile.in	2016-09-06 16:12:39.000000000 +0200
++++ rancid-3.5.1.new/bin/Makefile.in	2016-12-06 13:33:58.606130022 +0100
+@@ -238,7 +238,7 @@
  #INCLUDES += -I$(top_srcdir)/include
  
  #CFLAGS += -g

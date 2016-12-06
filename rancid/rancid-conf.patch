@@ -1,5 +1,6 @@
---- a/etc/rancid.conf.sample.in	2014-05-19 13:52:44.000000000 -0700
-+++ b/etc/rancid.conf.sample.in	2014-10-06 20:39:30.935776609 -0700
+diff -uNr rancid-3.5.1/etc/rancid.conf.sample.in rancid-3.5.1.new/etc/rancid.conf.sample.in
+--- rancid-3.5.1/etc/rancid.conf.sample.in	2016-09-04 11:43:49.000000000 +0200
++++ rancid-3.5.1.new/etc/rancid.conf.sample.in	2016-12-06 13:31:38.909126595 +0100
 @@ -31,8 +31,8 @@
  TMPDIR=/tmp; export TMPDIR
  # Be careful changing this, it affects CVSROOT below.  It should be a FQPN, not
@@ -11,8 +12,8 @@
  #
  # Set to the name of the sendmail executable (or script) that will accept the
  # -t option to take its rcpt and other headers from std-in and $MAILOPTS (see
-@@ -49,7 +49,7 @@
- #     commands can run, e.g. by running rancid-cvs after installation.
+@@ -55,7 +55,7 @@
+ #     repositories to the remote and update the group's .git/config.
  CVSROOT=$BASEDIR/CVS; export CVSROOT
  # Location of log files produced by rancid-run(1).
 -LOGDIR=$BASEDIR/logs; export LOGDIR
