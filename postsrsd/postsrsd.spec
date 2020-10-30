@@ -4,7 +4,7 @@
 
 Name:           postsrsd
 Version:        1.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Sender Rewriting Scheme (SRS) provider
 
 License:        GPLv2+
@@ -107,6 +107,10 @@ fi
 
 
 %changelog
+* Fri Oct 30 2020 Simon Klempert <git@klempert.net> 1.6-2
+- Try to fix build (git@klempert.net)
+- Update postsrsd from 1.1 to 1.6 (git@klempert.net)
+
 * Tue Oct 06 2020 Marc Dequènes (Duck) <duck@redhat.com> - 1.6-1
 - NUR
 - define INIT_FLAVOR as detection does not work in build environment
