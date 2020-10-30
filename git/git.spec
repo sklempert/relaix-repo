@@ -97,7 +97,7 @@
 
 Name:           git
 Version:        2.29.2
-Release:        1%{?rcrev}%{?dist}
+Release:        2%{?rcrev}%{?dist}
 Summary:        Fast Version Control System
 License:        GPLv2
 URL:            https://git-scm.com/
@@ -1078,6 +1078,10 @@ rmdir --ignore-fail-on-non-empty "$testdir"
 %{?with_docs:%{_pkgdocdir}/git-svn.html}
 
 %changelog
+* Fri Oct 30 2020 Simon Klempert <git@klempert.net> 2.29.2-2
+- Fix source location for git (git@klempert.net)
+- Update to git 2.29.2 (git@klempert.net)
+
 * Thu Oct 29 2020 Todd Zullinger <tmz@pobox.com> - 2.29.2-1
 - update to 2.29.2
 
