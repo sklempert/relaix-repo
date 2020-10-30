@@ -14,7 +14,7 @@
 
 Name:		libspf2
 Version:	1.2.10
-Release:	51.20170309git%{git}%{?dist}
+Release:	52.20170309git%{git}%{?dist}
 Summary:	An implementation of the SPF specification
 License:	BSD or LGPLv2+
 Url:		http://www.libspf2.org/
@@ -215,6 +215,9 @@ exit 0
 %{_mandir}/man3/Mail::SPF_XS.3pm*
 
 %changelog
+* Fri Oct 30 2020 Simon Klempert <git@klempert.net> 1.2.10-52.20170309gitec7545e
+- Update source code of libspf2 to upstream (git@klempert.net)
+
 * Fri Oct 30 2020 Simon Klempert <git@klempert.net> 1.2.10-51.20170309gitec7545e
 - Fix build of libspf2 for CentOS8 (git@klempert.net)
 
