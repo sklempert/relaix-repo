@@ -8,7 +8,7 @@
 Summary: SRS email address rewriting engine
 Name: libsrs2
 Version: 1.0.18
-Release: 51%{?dist}
+Release: 52%{?dist}
 License: GPL
 Group: System Environment/Libraries
 Packager: Shevek <srs@anarres.org>
@@ -67,6 +67,9 @@ make \
 %{_libdir}/libsrs2.la
 
 %changelog
+* Fri Oct 30 2020 Simon Klempert <git@klempert.net> 1.0.18-52
+- 
+
 * Fri Oct 30 2020 Simon Klempert <git@klempert.net> 1.0.18-51
 - Fix build of libsrs2 for CentOS8 (git@klempert.net)
 
