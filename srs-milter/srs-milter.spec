@@ -1,7 +1,7 @@
 Summary:        Milter (mail filter) for SRS
 Name:           srs-milter
 Version:        0.0.2
-Release:        10
+Release:        11
 License:        GPL
 Group:          System Environment/Daemons
 URL:            https://github.com/vokac/srs-milter
@@ -148,6 +148,10 @@ fi
 
 
 %changelog
+* Fri Oct 30 2020 Simon Klempert <git@klempert.net> 0.0.2-11
+- Adjust syslog patch (git@klempert.net)
+- Update srs-milter to upstream and CentOS8 (git@klempert.net)
+
 * Tue Jan 27 2015 Petr Vokac <vokac@fjfi.cvut.cz> - 0.0.2-1
 - Read full configuration also from config file
 - Startup configuration for systemd
