@@ -1,23 +1,16 @@
 Summary:        Milter (mail filter) for SRS
 Name:           srs-milter
 Version:        0.0.2
-Release:        8
+Release:        10
 License:        GPL
 Group:          System Environment/Daemons
 URL:            https://github.com/vokac/srs-milter
 Source0:        %{name}-%{version}.tar.gz
-Source1:	srs-milter.default.conf
-Source2:	srs-milter.forward.conf
-Source3:	srs-milter.reverse.conf
-Source4:	srs-milter@.service
 
-Patch0: srs-milter-0.0.2-vokac.patch
-Patch1: srs-milter-0.0.2-sk.patch
 Patch2: srs-milter-0.0.2-sk-syslog.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  sendmail-devel libsrs2
-BuildRequires:  libspf2 >= 1.2.10-10
+BuildRequires:  gcc sendmail-devel libsrs2-devel libspf2-devel
 %if 0%{?rhel} < 6
 Requires:       sendmail
 %else
@@ -40,6 +33,7 @@ Requires(postun): initscripts
 The srs-milter package is an implementation of the SRS standard
 that tries to fix problems caused by SPF in case of forwarded mail
 
+
 %package postfix
 Summary:        Postfix support for srs-milter
 Group:          System Environment/Daemons
@@ -56,8 +50,6 @@ socket to communicate with the Postfix MTA.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 %patch2 -p1
 
 %build
@@ -67,23 +59,26 @@ socket to communicate with the Postfix MTA.
 %{__rm} -rf %{buildroot}
 
 %if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
-%{__install} -D -m0644 %{SOURCE4} %{buildroot}%{_unitdir}/%{name}@.service
+%{__install} -D -m0644 dist/redhat/srs-milter@.service %{buildroot}%{_unitdir}/%{name}@.service
 %else
 %{__install} -D -m0644 dist/redhat/srs-milter.sysconfig %{buildroot}%{_sysconfdir}/sysconfig/srs-milter
 %{__install} -D -m0755 dist/redhat/srs-milter.init %{buildroot}%{_initrddir}/srs-milter
 %endif
-%{__install} -D -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/srs-milter.default.conf
-%{__install} -D -m0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/srs-milter.forward.conf
-%{__install} -D -m0644 %{SOURCE3} %{buildroot}%{_sysconfdir}/srs-milter.reverse.conf
+%{__install} -D -m0644 dist/redhat/srs-milter.default.conf %{buildroot}%{_sysconfdir}/srs-milter.default.conf
+%{__install} -D -m0644 dist/redhat/srs-milter.forward.conf %{buildroot}%{_sysconfdir}/srs-milter.forward.conf
+%{__install} -D -m0644 dist/redhat/srs-milter.reverse.conf %{buildroot}%{_sysconfdir}/srs-milter.reverse.conf
 %{__install} -d -m0755 %{buildroot}%{_localstatedir}/lib/srs-milter
 %{__install} -d -m0750 %{buildroot}%{_localstatedir}/run/srs-milter
-%{__install} -d -m0750 %{buildroot}%{_localstatedir}/run/srs-milter/postfix
+%{__install} -d -m0750 %{buildroot}%{_localstatedir}/run/srs-milter-postfix
 %{__install} -D -m0755 src/srs-filter %{buildroot}%{_sbindir}/srs-milter
 #%{__strip} %{buildroot}%{_sbindir}/srs-milter
 
 %{__install} -p -d %{buildroot}%{_sysconfdir}/tmpfiles.d
 cat > %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}.conf <<'EOF'
 D %{_localstatedir}/run/%{name} 0750 srs-milt srs-milt -
+EOF
+cat > %{buildroot}%{_sysconfdir}/tmpfiles.d/%{name}-postfix.conf <<'EOF'
+D %{_localstatedir}/run/%{name}-postfix 0750 srs-milt postfix -
 EOF
 
 
@@ -131,7 +126,7 @@ fi
 
 %files
 %defattr(-,root,root,-)
-%doc README.md
+%doc README.md dist/redhat/*.conf
 %if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
 %{_unitdir}/%{name}@.service
 %else
@@ -148,30 +143,11 @@ fi
 
 %files postfix
 %defattr(-,root,root,-)
-%dir %attr(-,sa-milt,postfix) %{_localstatedir}/run/srs-milter/postfix/
+%config(noreplace) %{_sysconfdir}/tmpfiles.d/%{name}-postfix.conf
+%dir %attr(-,sa-milt,postfix) %{_localstatedir}/run/srs-milter-postfix/
+
 
 %changelog
-* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-8
-- Add more normal output to log in non verbose mode (git@klempert.net)
-
-* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-7
-- Fix missing srs-milter-0.0.2-sk-syslog.patch (git@klempert.net)
-
-* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-6
-- Fix syslog category
-
-* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-5
-- Fix require libspf2 version statement (git@klempert.net)
-
-* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-4
-- Require correct libspf2 version (git@klempert.net)
-
-* Tue Sep 20 2016 Simon Klempert <git@klempert.net> 0.0.2-3
-- new package built with tito
-
-* Mon Sep 19 2016 Simon Klempert <git@klempert.net> - 0.0.2-2
-- Fix command line options and spec file
-
 * Tue Jan 27 2015 Petr Vokac <vokac@fjfi.cvut.cz> - 0.0.2-1
 - Read full configuration also from config file
 - Startup configuration for systemd

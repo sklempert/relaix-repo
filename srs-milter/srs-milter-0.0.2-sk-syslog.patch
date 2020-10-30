@@ -291,6 +291,15 @@ diff -uNr srs-milter-0.0.2.dist/src/srs-filter.c srs-milter-0.0.2/src/srs-filter
      exit(EXIT_FAILURE);
    }
  
+@@ -1087,7 +1098,7 @@
+       strncat(args, " ", 1023);
+       strncat(args, argv[i], 1023);
+     }
+-    syslog(LOG_NOTICE, "Starting %s v%s (args:%s)", SRS_MILTER_NAME, SRS_MILTER_VERSION, args);
++    syslog(LOG_MAiL | LOG_NOTICE, "Starting %s v%s (args:%s)", SRS_MILTER_NAME, SRS_MILTER_VERSION, args);
+ 
+     SPF_error_handler = SPF_error_syslog;
+     SPF_warning_handler = SPF_warning_syslog;
 @@ -1100,12 +1111,12 @@
      // Milter library version
      unsigned int milter_major, milter_minor, milter_patch;
