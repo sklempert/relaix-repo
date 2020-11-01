@@ -39,7 +39,6 @@ Sophos Anti-Virus Dynamic Interface
 %install
 %{__rm} -rf ${RPM_BUILD_ROOT}
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}
-%{__mkdir} -p ${RPM_BUILD_ROOT}%{_sysconfdir}/init.d
 %{__mkdir} -p ${RPM_BUILD_ROOT}/%{_libdir}
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{_mandir}/man1
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{dir_sav_install}/%{name}
@@ -48,8 +47,9 @@ Sophos Anti-Virus Dynamic Interface
 %{__install} -m 0644 %{name_daemon}.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}/
 %{__install} -m 0644 %{name_daemon}lang_en.txt ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}/
 %if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
-%{__install} -D -m0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}@.service
+%{__install} -D -m0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name_daemon}@.service
 %else
+%{__mkdir} -p ${RPM_BUILD_ROOT}%{_sysconfdir}/init.d
 %{__install} -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name_daemon}
 %endif
 
@@ -65,11 +65,39 @@ Sophos Anti-Virus Dynamic Interface
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/%{name_daemon}.conf
 %{_sysconfdir}/%{name}/%{name_daemon}lang_en.txt
-%{_sysconfdir}/init.d/%{name_daemon}
 %dir %{dir_sav_install}/%{name}
 %{dir_sav_install}/%{name}/%{name_daemon}
 %{_libdir}/libssp.so.0
 %{_libdir}/libsavi.so.3
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
+%{_unitdir}/%{name_daemon}@.service
+%else
+%{_sysconfdir}/init.d/%{name_daemon}
+%endif
+
+%post
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
+%systemd_post %{name_daemon}.service
+%else
+/sbin/chkconfig --add %{name_daemon} || :
+%endif
+
+%preun
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
+%systemd_preun %{name_daemon}.service
+%else
+if [ $1 -eq 0 ]; then
+    %{_initrddir}/%{name_daemon} stop &>/dev/null || :
+    /sbin/chkconfig --del %{name_daemon} || :
+fi
+%endif
+
+%postun
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
+%systemd_postun_with_restart %{name_daemon}.service
+%else
+%{_initrddir}/%{name_daemon} condrestart &>/dev/null || :
+%endif
 
 %changelog
 * Sat Oct 31 2020 Matthias Hensler <matthias@wspse.de> 2.4.0-3
