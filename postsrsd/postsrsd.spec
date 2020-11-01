@@ -4,7 +4,7 @@
 
 Name:           postsrsd
 Version:        1.6
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Sender Rewriting Scheme (SRS) provider
 
 License:        GPLv2+
@@ -107,6 +107,9 @@ fi
 
 
 %changelog
+* Sun Nov 01 2020 Simon Klempert <git@klempert.net> 1.6-3
+- 
+
 * Fri Oct 30 2020 Simon Klempert <git@klempert.net> 1.6-2
 - Try to fix build (git@klempert.net)
 - Update postsrsd from 1.1 to 1.6 (git@klempert.net)
