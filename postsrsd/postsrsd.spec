@@ -29,7 +29,7 @@ SRS is needed if your mail server acts as forwarder.
 
 %prep
 %autosetup -n %{name}-%{version}
-%if (0%{?rhel} && 0%{?rhel} < 9)
+%if (0%{?rhel} && 0%{?rhel} < 8)
 mkdir build
 cd build && %cmake .. %build_options
 %else
@@ -38,7 +38,7 @@ cd build && %cmake .. %build_options
 
 
 %build
-%if (0%{?rhel} && 0%{?rhel} < 9)
+%if (0%{?rhel} && 0%{?rhel} < 8)
 %make_build -C build
 %else
 %cmake_build
@@ -46,7 +46,7 @@ cd build && %cmake .. %build_options
 
 
 %install
-%if (0%{?rhel} && 0%{?rhel} < 9)
+%if (0%{?rhel} && 0%{?rhel} < 8)
 %make_install -C build
 %else
 %cmake_install
