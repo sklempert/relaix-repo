@@ -4,7 +4,7 @@
 
 Name: savdi
 Version: 2.4.0
-Release: 3
+Release: 4
 Group: System Environment/Daemons
 URL: https://www.sophos.com/
 License: Copyright 2000-2015 Sophos Limited. All rights reserved
@@ -100,6 +100,10 @@ fi
 %endif
 
 %changelog
+* Sun Nov 01 2020 Simon Klempert <git@klempert.net> 2.4.0-4
+- Fix systemd unitfile (git@klempert.net)
+- Create sytemd service for savdi (git@klempert.net)
+
 * Sat Oct 31 2020 Matthias Hensler <matthias@wspse.de> 2.4.0-3
 - fix build for EL8
 
