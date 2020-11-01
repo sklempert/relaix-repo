@@ -4,16 +4,28 @@
 
 Name: savdi
 Version: 2.4.0
-Release: 2
+Release: 3
 Group: System Environment/Daemons
 URL: https://www.sophos.com/
 License: Copyright 2000-2015 Sophos Limited. All rights reserved
-Source0: %{name}-23-linux-64bit.tar
+Source0: %{name}-24-linux-64bit.tar
 Source1: savdid.init
+Source2: savdid.service
 Summary: Sophos Anti-Virus Dynamic Interface
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReqProv: no
 Requires: glibc savinstpkg
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
+BuildRequires: systemd
+%else
+Requires(post): /sbin/chkconfig
+Requires(post): /sbin/service
+Requires(preun): /sbin/chkconfig, initscripts
+Requires(postun): initscripts
+%endif
 
 %description
 Sophos Anti-Virus Dynamic Interface
@@ -28,17 +40,21 @@ Sophos Anti-Virus Dynamic Interface
 %{__rm} -rf ${RPM_BUILD_ROOT}
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{_sysconfdir}/init.d
-%{__mkdir} -p ${RPM_BUILD_ROOT}/%{_lib}
+%{__mkdir} -p ${RPM_BUILD_ROOT}/%{_libdir}
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{_mandir}/man1
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{dir_sav_install}/%{name}
 
 %{__install} -m 0755 %{name_daemon} ${RPM_BUILD_ROOT}%{dir_sav_install}/%{name}/
 %{__install} -m 0644 %{name_daemon}.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}/
 %{__install} -m 0644 %{name_daemon}lang_en.txt ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}/
-%{__install} -m 0755 %{SOURCE1} ${RPM_BUILD_ROOT}%{_sysconfdir}/init.d/%{name_daemon}
+%if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
+%{__install} -D -m0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name}@.service
+%else
+%{__install} -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name_daemon}
+%endif
 
-%{__ln_s} %{dir_sav_install}/%{_lib}/libssp.so.0 ${RPM_BUILD_ROOT}/%{_lib}/libssp.so.0
-%{__ln_s} %{dir_sav_install}/%{_lib}/libsavi.so.3 ${RPM_BUILD_ROOT}/%{_lib}/libsavi.so.3
+%{__ln_s} %{dir_sav_install}/%{_lib}/libssp.so.0 ${RPM_BUILD_ROOT}/%{_libdir}/libssp.so.0
+%{__ln_s} %{dir_sav_install}/%{_lib}/libsavi.so.3 ${RPM_BUILD_ROOT}/%{_libdir}/libsavi.so.3
 
 %clean
 %{__rm} -rf ${RPM_BUILD_ROOT}
@@ -52,10 +68,13 @@ Sophos Anti-Virus Dynamic Interface
 %{_sysconfdir}/init.d/%{name_daemon}
 %dir %{dir_sav_install}/%{name}
 %{dir_sav_install}/%{name}/%{name_daemon}
-/%{_lib}/libssp.so.0
-/%{_lib}/libsavi.so.3
+%{_libdir}/libssp.so.0
+%{_libdir}/libsavi.so.3
 
 %changelog
+* Sat Oct 31 2020 Matthias Hensler <matthias@wspse.de> 2.4.0-3
+- fix build for EL8
+
 * Sat Oct 01 2016 Simon Klempert <git@klempert.net> 2.4.0-2
 - Set correct savdi version (git@klempert.net)
 

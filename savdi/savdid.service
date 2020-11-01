@@ -1,0 +1,18 @@
+[Unit]
+Description=SAV Dynamic Interface (SAVDI) is an interface between Amavis and Sophos Anti-Virus for Linux.
+After=network.target
+#Wants=amavisd.service
+
+[Service]
+Type=forking
+User=root
+Group=root
+PIDFile=/var/run/savdid.pid
+ExecStart=/opt/sophos-av/savdi/savdid -d -f /var/run/savdid.pid
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
