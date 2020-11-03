@@ -47,7 +47,7 @@ Sophos Anti-Virus Dynamic Interface
 %{__install} -m 0644 %{name_daemon}.conf ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}/
 %{__install} -m 0644 %{name_daemon}lang_en.txt ${RPM_BUILD_ROOT}%{_sysconfdir}/%{name}/
 %if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
-%{__install} -D -m0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name_daemon}@.service
+%{__install} -D -m0644 %{SOURCE2} %{buildroot}%{_unitdir}/%{name_daemon}.service
 %else
 %{__mkdir} -p ${RPM_BUILD_ROOT}%{_sysconfdir}/init.d
 %{__install} -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/%{name_daemon}
@@ -70,7 +70,7 @@ Sophos Anti-Virus Dynamic Interface
 %{_libdir}/libssp.so.0
 %{_libdir}/libsavi.so.3
 %if 0%{?rhel} >= 7 || 0%{?fedora} >= 18
-%{_unitdir}/%{name_daemon}@.service
+%{_unitdir}/%{name_daemon}.service
 %else
 %{_sysconfdir}/init.d/%{name_daemon}
 %endif
