@@ -1,6 +1,6 @@
 Name: p0f
 Version: 3.09b
-Release: 10%{?dist}
+Release: 11%{?dist}
 
 Summary: Versatile passive OS fingerprinting tool
 License: LGPLv2+
@@ -50,6 +50,9 @@ make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS"
 
 
 %changelog
+* Tue Nov 03 2020 Simon Klempert <git@klempert.net> 3.09b-11
+- Update p0f for CentOS8 (git@klempert.net)
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
