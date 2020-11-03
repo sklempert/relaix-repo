@@ -1,16 +1,15 @@
 Name: p0f
 Version: 3.09b
-Release: 3%{?dist}
+Release: 10%{?dist}
 
 Summary: Versatile passive OS fingerprinting tool
-Group: Applications/Internet
 License: LGPLv2+
 URL: http://lcamtuf.coredump.cx/p0f.shtml
 Source: http://lcamtuf.coredump.cx/p0f3/releases/p0f-%{version}.tgz
 # Fix up build script to use proper flags
 Patch1: p0f-3.06b-compiler.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libpcap-devel
+BuildRequires: gcc
 
 %description
 P0f is a versatile passive OS fingerprinting tool. P0f can identify the
@@ -41,12 +40,8 @@ make %{?_smp_mflags} CFLAGS="$RPM_OPT_FLAGS"
 %{__cp} p0f-client p0f-sendsyn p0f-sendsyn6 $RPM_BUILD_ROOT%{_sbindir}
 
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 
 %files
-%defattr(-,root,root,-)
 %doc docs/*
 %doc tools/README-TOOLS
 %{_sbindir}/*
@@ -55,8 +50,38 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Sep 22 2016 Simon Klempert <git@klempert.net> 3.09b-3
-- new package built with tito
+* Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 3.09b-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Tue Apr 19 2016 Kevin Fenzi <kevin@scrye.com> - 3.09b-1
+- Update to 3.09b
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.08b-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
 * Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.08b-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
